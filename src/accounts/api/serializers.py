@@ -11,6 +11,15 @@ exipre_delta = api_settings.JWT_REFRESH_EXPIRATION_DELTA
 
 User = get_user_model()
 
+
+class UserPublicSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            'id',
+            'username'
+        ]
+
 class UserRegisterSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(write_only=True)
     token   = serializers.SerializerMethodField(read_only=True)
@@ -52,6 +61,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
             email=validated_data.get('email')
         )
         user_obj.set_password(validated_data.get('password'))
+        user_obj.is_active = False
         user_obj.save()
         return user_obj
 

@@ -140,10 +140,18 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',        
         
     ),
+    'DEFAULT_PAGINATION_CLASS': ('src.restconf.pagination.APIPagination'),
+    'DEFAULT_FILTER_BACKENDS': (
+        'rest_framework.filters.SearchFilter',
+        'rest_framework.filters.OrderingFilter',
+    ),
+    'SEARCH_PARAM': 'search',
+    'ORDER_PARAM': 'order'
     
 }
 
-JWT_AUTH = {  
+JWT_AUTH = {
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=7),  
     'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=7),
     'JWT_ALLOW_REFRESH': True,
     'JWT_RESPONSE_PAYLOAD_HANDLER': 'accounts.api.utils.jwt_response_payload_handler'

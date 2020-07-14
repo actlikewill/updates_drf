@@ -5,6 +5,8 @@ from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication
 from django.shortcuts import get_object_or_404
 
+from accounts.api.permissions import IsOwnerOrReadOnly
+
 from status.models import Status
 from .serializers import StatusSerializer
 
@@ -24,18 +26,20 @@ class StatusAPIView(
     generics.ListAPIView
     ):
     """
-    One Endpoint to rule them all.
+    One Endpoint to rule them all. Refactoring is necessary.
     """
-    
+    permission_classes                  = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
     serializer_class                    = StatusSerializer
+    search_fields                       = ('user__username', 'content')
     passed_id                           = None    
 
-    def get_queryset(self):        
-        qs = Status.objects.all()
-        query = self.request.GET.get('q')               
-        if query is not None:
-            qs = qs.filter(content__icontains=query)
-        return qs    
+    
+    # def get_queryset(self):        
+    #     qs = Status.objects.all()
+    #     query = self.request.GET.get('q')               
+    #     if query is not None:
+    #         qs = qs.filter(content__icontains=query)
+    #     return qs    
 
     def get_object(self):
         request         = self.request
@@ -104,7 +108,7 @@ class StatusAPIView(
 class StatusCreateAPIView(generics.CreateAPIView):
     """
     Lets leave this here for reference but this has been taken care
-    of by the above view with plus adding the create model view mixin
+    of by the above view by adding the create model view mixin
     """
     permission_classes                  = []
     authentication_classes              = []
@@ -126,7 +130,7 @@ class StatusDetailAPIView(mixins.UpdateModelMixin, mixins.DestroyModelMixin, gen
 class StatusUpdateAPIView(generics.UpdateAPIView):
     """
     Lets leave this here for reference but this has been taken care
-    of by the above view with plus adding the update mixin view mixin
+    of by the above view by adding the update mixin view mixin
     """
     permission_classes                  = []
     authentication_classes              = []
@@ -136,7 +140,7 @@ class StatusUpdateAPIView(generics.UpdateAPIView):
 class StatusDeleteAPIView(generics.DestroyAPIView):
     """
     Lets leave this here for reference but this has been taken care
-    of by the above view with plus adding the delete mixin view mixin
+    of by the above view by adding the delete mixin view mixin
     """
     permission_classes                  = []
     authentication_classes              = []
